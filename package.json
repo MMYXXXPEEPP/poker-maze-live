@@ -1,0 +1,6 @@
+{
+  "name":"running-man-poker-maze","version":"1.0.0","private":true,
+  "description":"Custom player count and role decks, no referee, no microphone, real-time Poker Maze game",
+  "scripts":{"start":"node server.js","dev":"node --watch server.js"},
+  "engines":{"node":">=18"}
+}

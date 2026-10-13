@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101129">
+  <title>扑克迷局 · 好友联机</title>
+  <meta name="description" content="无需下载，打开好友分享的房间链接即可加入扑克迷局。支持电脑和手机浏览器，实时联机、隐藏身份、动态抽牌与走棋。">
+  <meta property="og:title" content="扑克迷局 · 邀请你进入游戏房间">
+  <meta property="og:description" content="点击链接加入好友房间：纯文字社交推理，多人实时联机。">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app" class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon">♠</span><span>扑克牌<span class="brand-accent">迷局</span><small>POKER MAZE · LIVE ROOM</small></span></div>
+    <div class="topbar-right"><span class="online-indicator" id="connection">● 连接中</span><button type="button" class="tinybtn" id="rulesBtn">玩法说明</button></div>
+  </header>
+  <section class="landing" id="landing">
+    <div class="hero-card">
+      <div class="eyebrow">SOCIAL DEDUCTION · CUSTOM PLAYER COUNT</div>
+      <div class="hero-icons"><span>♥</span><span>♠</span><span>★</span></div>
+      <h1>一张底牌<br><em>三方较量</em></h1>
+      <p>不开麦 · 无裁判 · 全程自动结算 · 文字推理联机局</p>
+      <div class="hero-options"><span>🎭 隐藏身份</span><span>🗳️ 匿名投票</span><span>🃏 秘密篡改</span></div>
+      <div id="inviteBanner" class="invite-banner hidden"><div class="invite-icon">✉</div><div><div class="invite-title">好友邀请你加入房间</div><div class="invite-code">房间码 <strong id="inviteCode">------</strong></div><div class="invite-note">输入昵称即可加入 · 无需复制房间码</div></div></div>
+      <div class="enter-fields"><label>你的昵称<input id="nickname" type="text" maxlength="14" autocomplete="off" placeholder="输入玩家昵称"></label>
+      <label>我的互动台词（可选）<input id="phrase" type="text" maxlength="36" autocomplete="off" placeholder="例如：别看我，我真是好人！"></label></div>
+      <div class="entry-actions"><button class="primary" id="createBtn">✦ 创建房间</button></div>
+      <div class="join-row"><input type="text" id="roomInput" maxlength="6" placeholder="输入 6 位房间码"><button id="joinBtn" class="secondary">加入房间 →</button></div>
+      <button type="button" class="tinybtn invite-back" id="backToHome">← 返回首页创建自己的房间</button>
+      <p class="footnote">游戏需要所有玩家同时在线。房主创建后分享邀请链接即可联机。</p>
+    </div>
+    <aside class="landing-aside"><div class="preview-title">本局核心玩法</div>
+      <div class="feature"><b>01</b><span><strong>成为国王</strong><small>提名王后、骑士，由全员匿名投票决定。</small></span></div>
+      <div class="feature"><b>02</b><span><strong>秘密交牌</strong><small>国王与王后各抽二选一，骑士公开打出一张。</small></span></div>
+      <div class="feature"><b>03</b><span><strong>走向终点</strong><small>红桃、黑桃与Joker争夺三条终点路线。</small></span></div>
+      <div class="feature"><b>04</b><span><strong>纯文字推理</strong><small>自由聊天、鲜花鸡蛋互动，查验允许撒谎。</small></span></div>
+      <div class="preview-title" style="margin:26px 0 14px">全新扑克牌人物头像</div>
+      <div class="portrait-preview">
+        <div><img src="/avatars/civilian.webp" alt="平民头像"><small>普通玩家</small></div>
+        <div><img src="/avatars/heart.webp" alt="红桃好人头像"><small>红桃平民</small></div>
+        <div><img src="/avatars/big.webp" alt="大王Joker头像"><small>大王 JOKER</small></div>
+        <div><img src="/avatars/little.webp" alt="小王Joker头像"><small>小王 JOKER</small></div>
+      </div>
+    </aside>
+  </section>
+  <main id="game" class="game hidden">
+    <div class="room-head">
+      <div><div class="eyebrow">PRIVATE GAME ROOM</div><h2>房间 <span id="roomCode"></span> <button class="copy-btn" id="copyBtn" title="复制邀请链接">🔗 邀请</button></h2><div class="subline" id="roundStatus"></div></div>
+      <div class="room-right"><span id="phaseBadge" class="phase-badge">等待中</span><button id="leaveBtn" class="tinybtn">离开</button></div>
+    </div>
+    <div class="workspace">
+      <aside class="players-panel panel">
+        <div class="panel-title">玩家席位 <span id="playerCount">0 / 5</span></div>
+        <div id="roster" class="roster"></div>
+        <div id="identityCard" class="identity-card"></div>
+        <div id="lobbySettings" class="lobby-settings"></div>
+      </aside>
+      <section class="map-panel panel">
+        <div class="panel-title"><span>命运棋盘 <small>DESTINY BOARD</small></span><span class="map-hint">共享棋子 · 三方争夺</span></div>
+        <div class="board-shell"><svg id="board" viewBox="0 0 760 650" role="img" aria-label="红桃、黑桃与Joker三方向棋盘"></svg></div>
+        <div class="progress-row" id="progressRow"></div>
+        <div class="board-info">方向牌使唯一棋子沿对应方向移动一格；进入任一阵营的终点区域，即判该阵营胜利。</div>
+      </section>
+      <section class="action-panel panel">
+        <div class="panel-title">行动台 <span id="turnNumber">ROUND 00</span></div>
+        <div id="phaseAction" class="phase-action"></div>
+        <div class="phase-foot"><div class="phase-foot-label">本局公约</div><span>否决机会仅 1 次</span><span>国王不连续任职</span><span>底牌仅自己可见</span></div>
+      </section>
+    </div>
+    <section class="chat-panel panel">
+      <div class="chat-head"><div class="panel-title">公屏情报 <small>PUBLIC CHANNEL</small></div><span>纯文字交流 · 无语音</span></div>
+      <div class="chat-list" id="chatList" aria-live="polite"></div>
+      <div class="chat-tools"><button id="quickPhrase" class="tinybtn">💬 我的台词</button><label for="giftTarget">互动给</label><select id="giftTarget"></select><button class="tinybtn giftbtn" id="flowerBtn">💐 送鲜花</button><button class="tinybtn giftbtn" id="eggBtn">🥚 丢鸡蛋</button></div>
+      <form id="chatForm" class="chat-compose"><input id="chatText" maxlength="240" autocomplete="off" placeholder="输入公屏文字，跟大家盘一盘身份…"><button class="primary">发送 ↗</button></form>
+    </section>
+  </main>
+</div>
+<dialog id="shareDialog" class="share-dialog"><div class="share-heading"><h2>邀请好友联机</h2><button type="button" class="tinybtn" id="closeShare">✕</button></div><div class="share-room">房间码：<strong id="shareRoomCode">------</strong></div><p>把下面的网址发到微信群，朋友用手机或电脑打开就能进入房间。</p><input id="shareLink" aria-label="房间邀请链接" readonly><div class="share-buttons"><button type="button" id="shareCopyBtn" class="primary">📋 复制链接</button><button type="button" id="shareNativeBtn" class="secondary">↗ 系统分享</button></div></dialog>
+<div id="toast" class="toast"></div>
+<div id="effectLayer" class="effect-layer"></div>
+<dialog id="rulesDialog" class="rules-dialog"><div class="dialog-title"><h2>扑克迷局 · 简明规则</h2><button type="button" id="closeRules" class="tinybtn">✕ 关闭</button></div>
+  <p><b>人数不限固定上限：</b>房主在开局前填写目标人数（至少3人）和红桃、黑桃、大王、小王的身份牌数。四种数量相加必须等于人数，红桃、黑桃、大王至少各1人。提供5人、6人、6人进阶快捷模板，也可以完全自行配牌。</p>
+  <p>国王提名不同的王后和骑士；全员匿名投票。每人全局可使用1张「否决」，赞成之外的否决票达到半数向上取整（例如5/6人均3票、7/8人均4票）则否决成功、换国王重新提名。通过后，国王和王后分别随机拿2张牌，各选1张私密交给骑士；骑士二选一出牌，另一张不公开。</p>
+  <p>方向分别为 ♥ 红桃、♠ 黑桃、★ Joker；每张牌让唯一棋子沿对应方向走一格。在放大镜格触发私密查验：国王选择其他玩家，对方只能回复“我不是某阵营”，但允许撒谎。</p>
+  <p>打出 Joker 且本局尚无小王时，大王可秘密将一名红桃/黑桃玩家改成小王（整局最多一次；多个大王时先操作的大王完成）。若开局已配置小王，则不额外转化。棋子最先抵达的阵营终点决定胜负；已经转换身份的玩家按新阵营计。</p>
+  <p><b>本作品棋盘补充设定：</b>采用三方向六角格局，5步为默认终点距离（按原型8步缩短3步）；方向牌有限抽取，牌堆为红桃10张、黑桃10张、Joker7张，抽完自动重新洗牌。骑士可决定最终打出的方向，但无法查看另一方未交出的弃牌。</p>
+  <p class="modal-note">无裁判不等于无服务端：所有身份、抽牌、投票和私聊均由房间服务器校验，保证联机保密性。刷新页面可在同一标签页恢复身份，重启服务器会清空房间。</p>
+</dialog>
+<script src="/client.js" defer></script>
+</body></html>
